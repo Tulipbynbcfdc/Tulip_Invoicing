@@ -12,7 +12,7 @@ credentials:
     tulip:
       location: Pune
       name: Tulip
-      password: $2b$12$xtNDq.phIfDfCL/6DpmQ9u/76xDF3MicK5sPltwh6ZFQmfWQxyY6G
+      password: $2b$12$t6E6UlTLByLPytO51P8bkueNSz4lToy4/4qeORlpPckFn04H0prTm
       role: master
     user1:
       name: user1
