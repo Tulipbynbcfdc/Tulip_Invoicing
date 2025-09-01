@@ -14,3 +14,7 @@ credentials:
       name: Tulip
       password: $2b$12$xtNDq.phIfDfCL/6DpmQ9u/76xDF3MicK5sPltwh6ZFQmfWQxyY6G
       role: master
+    user1:
+      name: user1
+      password: $2b$12$gBCf40G1pf/.KaYFTsOfIO0B/WE5OjmxGZxetToLS6l7sJovCm4Y6
+      role: user
