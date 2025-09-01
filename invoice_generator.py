@@ -868,16 +868,3 @@ if is_admin or is_master:
         st.sidebar.info("No data available for filtering/export.")
 
 
-# =====================
-# 13) Footer
-# =====================
-st.markdown(
-    """
-    <hr style='margin-top: 50px;'>
-    <div style='text-align: center; font-size: 12px; color: gray;'>
-        Invoicing System Developed by <b>Rakesh Chourasia</b> |
-        <a href='https://www.linkedin.com/feed/' target='_blank'>LinkedIn</a>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
