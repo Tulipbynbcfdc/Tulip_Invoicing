@@ -18,3 +18,7 @@ credentials:
       name: user1
       password: $2b$12$gBCf40G1pf/.KaYFTsOfIO0B/WE5OjmxGZxetToLS6l7sJovCm4Y6
       role: user
+    BC01:
+      name: BC01
+      password: $2b$12$gwIWxa9DTtO80/HXeYhldOC0lgo46AaP3ANuJ1DvTJaWkzLyOBea2
+      role: user
