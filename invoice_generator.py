@@ -632,18 +632,35 @@ if is_admin or is_master:
             col2.metric("Total Items Sold", int(df["Qty"].sum()))
             col3.metric("Total Invoices", df["Invoice No"].nunique())
 
-            df["Date"] = pd.to_datetime(df["Date"]).dt.date  # ✅ strip time
+            df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.date
 
-            rev_over_time = df.groupby("Date")["Final Total (Item)"].sum().reset_index()
-            
-            st.plotly_chart(
-                px.bar(
-                    rev_over_time,
-                    x="Date", y="Final Total (Item)", title="Revenue Over Time",
-                    color_discrete_sequence=["#2ca02c"]
-                ),
-                use_container_width=True,
+            rev_over_time = (
+            df.groupby("Date")["Final Total (Item)"]
+            .sum()
+            .reset_index()
+            .sort_values("Date")
             )
+
+            
+            import plotly.express as px
+
+            fig = px.bar(
+                rev_over_time,
+                x="Date",
+                y="Final Total (Item)",
+                title="Revenue Over Time",
+                color_discrete_sequence=["#2ca02c"]
+            )
+            
+            fig.update_layout(
+                xaxis=dict(
+                    tickformat="%d-%b",   # show as 04-Sep
+                    type="category"       # ensures one bar per date, no weird time scaling
+                )
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
 
             st.plotly_chart(
                 px.bar(
