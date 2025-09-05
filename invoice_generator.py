@@ -482,7 +482,7 @@ if st.button("🧾 Generate Invoice", disabled=st.button_disabled):
             it["artisan_payout"],
             grand_total,   # invoice-level total
             "Active",
-            Corporation,
+            corporation,
         ]
         for it in items
     ]
