@@ -672,40 +672,54 @@ if is_admin or is_master:
                 ),
                 use_container_width=True,
             )
-            df["Stall No"] = df["Stall No"].astype(str)   # ensure string
-            df["Stall No"] = pd.Categorical(df["Stall No"], categories=sorted(df["Stall No"].unique()))
-
+           # Ensure Stall No is treated as categorical (natural order)
+            df["Stall No"] = df["Stall No"].astype(str)
+            
+            # Extract stall numbers for proper ordering (S1, S2, S3…)
+            import re
+            stall_sorted = sorted(df["Stall No"].unique(), key=lambda x: int(re.sub(r"\D", "", x) or 0))
+            df["Stall No"] = pd.Categorical(df["Stall No"], categories=stall_sorted, ordered=True)
+            
+            # Stall-wise Revenue
+            stall_revenue = df.groupby("Stall No", as_index=False)["Final Total (Item)"].sum()
             st.plotly_chart(
                 px.bar(
-                    df.groupby("Stall No")["Final Total (Item)"].sum().reset_index(),
-                    x="Stall No",
-                    y="Final Total (Item)",
+                    stall_revenue,
+                    x="Stall No", y="Final Total (Item)",
                     title="Stall-wise Revenue",
                     color_discrete_sequence=["#FF0000"],
+                    text_auto=".2s"
                 ),
                 use_container_width=True,
             )
+            
+            # Average Discount % per Stall
+            stall_discount_avg = df.groupby("Stall No", as_index=False)["Discount%"].mean()
             st.plotly_chart(
                 px.bar(
-                    df.groupby("Stall No")["Discount%"].mean().reset_index(),
-                    x="Stall No",
-                    y="Discount%",
-                    title="Average Discount per Stall",
+                    stall_discount_avg,
+                    x="Stall No", y="Discount%",
+                    title="Average Discount % per Stall",
                     color_discrete_sequence=["#FF69B4"],
+                    text_auto=".1f"
                 ),
                 use_container_width=True,
             )
+            
+            # Total Discount Amount per Stall
             df["Discount Amt"] = df["Price"] * df["Qty"] * (df["Discount%"] / 100)
+            stall_discount_sum = df.groupby("Stall No", as_index=False)["Discount Amt"].sum()
             st.plotly_chart(
                 px.bar(
-                    df.groupby("Stall No")["Discount Amt"].sum().reset_index(),
-                    x="Stall No",
-                    y="Discount Amt",
+                    stall_discount_sum,
+                    x="Stall No", y="Discount Amt",
                     title="Total Discount ₹ Given per Stall",
                     color_discrete_sequence=["#FFA500"],
+                    text_auto=".2s"
                 ),
                 use_container_width=True,
             )
+
             rev_items = (
                 df.groupby("Item")["Final Total (Item)"].sum().sort_values(ascending=False).reset_index()
             )
