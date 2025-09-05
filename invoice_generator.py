@@ -620,146 +620,124 @@ if is_admin or is_master:
 # =====================
 if is_admin or is_master:
     st.subheader("📊 Sales Dashboard")
-    with st.expander("View Sales Analytics"):
+
+    with st.expander("View Sales Analytics", expanded=True):
         df = fetch_sheet_df()
+
         if not df.empty:
-            if "Date" in df.columns:
-                df["Date"] = pd.to_datetime(df["Date"], dayfirst=True, errors="coerce")
-
-            st.markdown("### Summary Stats")
-            col1, col2, col3 = st.columns(3)
-            col1.metric("Total Revenue", f"₹{df['Final Total (Item)'].sum():,.2f}")
-            col2.metric("Total Items Sold", int(df["Qty"].sum()))
-            col3.metric("Total Invoices", df["Invoice No"].nunique())
-
-            df["Date"] = pd.to_datetime(df["Date"], errors="coerce").dt.date
-
-            rev_over_time = (
-            df.groupby("Date")["Final Total (Item)"]
-            .sum()
-            .reset_index()
-            .sort_values("Date")
-            )
-
-            
             import plotly.express as px
 
-            fig = px.bar(
-                rev_over_time,
-                x="Date",
-                y="Final Total (Item)",
-                title="Revenue Over Time",
-                color_discrete_sequence=["#2ca02c"]
-            )
-            
-            fig.update_layout(
-                xaxis=dict(
-                    tickformat="%d-%b",   # show as 04-Sep
-                    type="category"       # ensures one bar per date, no weird time scaling
-                )
-            )
+            # --- Data Cleaning ---
+            if "Date" in df.columns:
+                df["Date"] = pd.to_datetime(df["Date"], dayfirst=True, errors="coerce").dt.date
+            df["Stall No"] = df["Stall No"].astype(str)
 
+            # --- KPIs ---
+            st.markdown("### 🔹 Key Metrics")
+            col1, col2, col3 = st.columns(3)
+            col1.metric("💰 Total Revenue", f"₹{df['Final Total (Item)'].sum():,.2f}")
+            col2.metric("📦 Items Sold", int(df["Qty"].sum()))
+            col3.metric("🧾 Invoices", df["Invoice No"].nunique())
+
+            # --- Revenue Over Time ---
+            rev_over_time = (
+                df.groupby("Date")["Final Total (Item)"].sum().reset_index().sort_values("Date")
+            )
+            fig = px.line(
+                rev_over_time,
+                x="Date", y="Final Total (Item)",
+                title="Revenue Over Time",
+                markers=True,
+                color_discrete_sequence=["#1f77b4"]
+            )
+            fig.update_layout(xaxis_title="Date", yaxis_title="Revenue (₹)")
             st.plotly_chart(fig, use_container_width=True)
 
-
+            # --- Top Items Sold ---
+            top_items = (
+                df.groupby("Item")["Qty"].sum()
+                .sort_values(ascending=False)
+                .head(10)
+                .reset_index()
+            )
             st.plotly_chart(
                 px.bar(
-                    df.groupby("Item")["Qty"].sum().sort_values(ascending=False).head(10).reset_index(),
-                    x="Item",
-                    y="Qty",
-                    title="Top-Selling Items",
-                    color_discrete_sequence=["#FFD700"],
+                    top_items,
+                    x="Item", y="Qty",
+                    title="Top 10 Items Sold",
+                    color_discrete_sequence=["#FF7F0E"]
                 ),
                 use_container_width=True,
             )
-           # Ensure Stall No is treated as categorical (natural order)
-            df["Stall No"] = df["Stall No"].astype(str)
-            
-            # Extract stall numbers for proper ordering (S1, S2, S3…)
-            import re
-            stall_sorted = sorted(df["Stall No"].unique(), key=lambda x: int(re.sub(r"\D", "", x) or 0))
-            df["Stall No"] = pd.Categorical(df["Stall No"], categories=stall_sorted, ordered=True)
-            
-            # Stall-wise Revenue
+
+            # --- Revenue Share by Item ---
+            rev_items = (
+                df.groupby("Item")["Final Total (Item)"].sum()
+                .sort_values(ascending=False)
+                .head(10)
+                .reset_index()
+            )
+            st.plotly_chart(
+                px.pie(
+                    rev_items,
+                    values="Final Total (Item)",
+                    names="Item",
+                    title="Top 10 Items Revenue Share",
+                    hole=0.4  # donut style
+                ),
+                use_container_width=True,
+            )
+
+            # --- Stall-wise Revenue ---
             stall_revenue = df.groupby("Stall No", as_index=False)["Final Total (Item)"].sum()
             st.plotly_chart(
                 px.bar(
                     stall_revenue,
                     x="Stall No", y="Final Total (Item)",
-                    title="Stall-wise Revenue",
-                    color_discrete_sequence=["#FF0000"],
-                    text_auto=".2s"
-                ),
-                use_container_width=True,
-            )
-            
-            # Average Discount % per Stall
-            stall_discount_avg = df.groupby("Stall No", as_index=False)["Discount%"].mean()
-            st.plotly_chart(
-                px.bar(
-                    stall_discount_avg,
-                    x="Stall No", y="Discount%",
-                    title="Average Discount % per Stall",
-                    color_discrete_sequence=["#FF69B4"],
-                    text_auto=".1f"
-                ),
-                use_container_width=True,
-            )
-            
-            # Total Discount Amount per Stall
-            df["Discount Amt"] = df["Price"] * df["Qty"] * (df["Discount%"] / 100)
-            stall_discount_sum = df.groupby("Stall No", as_index=False)["Discount Amt"].sum()
-            st.plotly_chart(
-                px.bar(
-                    stall_discount_sum,
-                    x="Stall No", y="Discount Amt",
-                    title="Total Discount ₹ Given per Stall",
-                    color_discrete_sequence=["#FFA500"],
-                    text_auto=".2s"
+                    title="Revenue by Stall",
+                    color_discrete_sequence=["#2ca02c"]
                 ),
                 use_container_width=True,
             )
 
-            rev_items = (
-                df.groupby("Item")["Final Total (Item)"].sum().sort_values(ascending=False).reset_index()
+            # --- Discounts ---
+            df["Discount Amt"] = df["Price"] * df["Qty"] * (df["Discount%"] / 100)
+
+            stall_discount = df.groupby("Stall No", as_index=False)["Discount Amt"].sum()
+            st.plotly_chart(
+                px.bar(
+                    stall_discount,
+                    x="Stall No", y="Discount Amt",
+                    title="Total Discounts Given per Stall",
+                    color_discrete_sequence=["#d62728"]
+                ),
+                use_container_width=True,
             )
+
+            # --- Revenue by Payment Method ---
             st.plotly_chart(
                 px.pie(
-                    rev_items.head(10),
-                    values="Final Total (Item)",
-                    names="Item",
-                    title="Revenue Share by Item",
+                    df.groupby("Payment Method")["Final Total (Item)"].sum().reset_index(),
+                    values="Final Total (Item)", names="Payment Method",
+                    title="Revenue by Payment Method"
                 ),
                 use_container_width=True,
             )
-                        # 🔹 Revenue by Payment Method
-            st.plotly_chart(
-                px.bar(
-                    df.groupby("Payment Method")["Final Total (Item)"].sum().reset_index(),
-                    x="Payment Method",
-                    y="Final Total (Item)",
-                    title="Revenue by Payment Method",
-                    color_discrete_sequence=["#1f77b4"]
-                ),
-                use_container_width=True
-            )
 
-            # 🔹 Revenue by Corporation
+            # --- Revenue by Corporation ---
             if "Corporation" in df.columns:
                 st.plotly_chart(
                     px.bar(
                         df.groupby("Corporation")["Final Total (Item)"].sum().reset_index(),
-                        x="Corporation",
-                        y="Final Total (Item)",
+                        x="Corporation", y="Final Total (Item)",
                         title="Revenue by Corporation",
-                        color_discrete_sequence=["#2ca02c"]
+                        color_discrete_sequence=["#9467bd"]
                     ),
-                    use_container_width=True
+                    use_container_width=True,
                 )
 
         else:
             st.info("No sales data found.")
-            
 
 
 # =====================
