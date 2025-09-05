@@ -221,8 +221,8 @@ def append_to_google_sheet(rows: list[list]):
             "Artisan Payout",
             "Final Total (Invoice)",
             "Status",
-            "Location",
             "Corporation",
+            "Location",
         ]
 
         # Check existing header
