@@ -46,4 +46,8 @@ credentials:
       name: bc07
       password: $2b$12$p0ems/219sPRjR04HPak.exA4xrKnfecl/SaO72BnpEpB07XLTNtq
       role: user
+    bc08:
+      name: bc08
+      password: $2b$12$c6hMlzIVHDOzxdGpkN8AdOeIjMRXm1tFtNWKDoqUHRfV5/v1fxwoC
+      role: user
 gst_number: 07AABCN8953B1ZI
