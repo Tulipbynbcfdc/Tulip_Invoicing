@@ -672,9 +672,12 @@ if is_admin or is_master:
                 ),
                 use_container_width=True,
             )
+            df["Stall No"] = df["Stall No"].astype(str)   # ensure string
+            df["Stall No"] = pd.Categorical(df["Stall No"], categories=sorted(df["Stall No"].unique()))
+
             st.plotly_chart(
                 px.bar(
-                    df.groupby("Stall No")["Final Total (Item)"].sum().sort_values(ascending=False).reset_index(),
+                    df.groupby("Stall No")["Final Total (Item)"].sum().reset_index(),
                     x="Stall No",
                     y="Final Total (Item)",
                     title="Stall-wise Revenue",
