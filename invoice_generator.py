@@ -632,16 +632,19 @@ if is_admin or is_master:
             col2.metric("Total Items Sold", int(df["Qty"].sum()))
             col3.metric("Total Invoices", df["Invoice No"].nunique())
 
+            df["Date"] = pd.to_datetime(df["Date"]).dt.date  # ✅ strip time
+
+            rev_over_time = df.groupby("Date")["Final Total (Item)"].sum().reset_index()
+            
             st.plotly_chart(
                 px.bar(
-                    df.groupby("Date")["Final Total (Item)"].sum().reset_index(),
-                    x="Date",
-                    y="Final Total (Item)",
-                    title="Revenue Over Time",
-                    color_discrete_sequence=["green"],
+                    rev_over_time,
+                    x="Date", y="Final Total (Item)", title="Revenue Over Time",
+                    color_discrete_sequence=["#2ca02c"]
                 ),
                 use_container_width=True,
             )
+
             st.plotly_chart(
                 px.bar(
                     df.groupby("Item")["Qty"].sum().sort_values(ascending=False).head(10).reset_index(),
