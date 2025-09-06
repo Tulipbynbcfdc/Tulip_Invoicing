@@ -348,7 +348,7 @@ st.markdown(f"### 🧾 Current Subtotal (After Discount): ₹ {subtotal:.2f}")
 # 7) PDF Rendering Helper
 # =====================
 
-def _draw_page(inv: canvas.Canvas, heading: str, totals: dict, gst_number: str):
+def _draw_page(inv: canvas.Canvas, heading: str, totals: dict):
     total_amount = totals["total_amount"]
     discount_amt = totals["discount_amt"]
     grand_total = totals["grand_total"]
@@ -451,10 +451,9 @@ if st.button("🧾 Generate Invoice", disabled=st.button_disabled):
     buf = BytesIO()
     height = 250 + 15 * len(items)
     pdf = canvas.Canvas(buf, pagesize=(200, height), bottomup=0)
-    gst_number = config["credentials"]["usernames"]["masteruser"].get("gst_number", "—")
-    _draw_page(pdf, "INVOICE", totals, gst_number)
+    _draw_page(pdf, "INVOICE", totals)
     pdf.showPage()
-    _draw_page(pdf, "ARTISAN SLIP", totals, gst_number)
+    _draw_page(pdf, "ARTISAN SLIP", totals)
     pdf.save()
     buf.seek(0)
 
@@ -586,8 +585,6 @@ if is_admin or is_master:
                 buf2 = BytesIO()
                 height2 = 250 + 15 * len(items)
                 pdf2 = canvas.Canvas(buf2, pagesize=(200, height2), bottomup=0)
-                gst_number = config["credentials"]["usernames"]["masteruser"].get("gst_number", "—")
-
                 _draw_page(
                     pdf2,
                     "INVOICE",
@@ -595,8 +592,7 @@ if is_admin or is_master:
                         "total_amount": total_amount_sel,
                         "discount_amt": discount_amt_sel,
                         "grand_total": grand_total_sel,
-                    },
-                    gst_number,  # ✅ Added argument
+                    }
                 )
                 
                 pdf2.showPage()
@@ -608,8 +604,7 @@ if is_admin or is_master:
                         "total_amount": total_amount_sel,
                         "discount_amt": discount_amt_sel,
                         "grand_total": grand_total_sel,
-                    },
-                    gst_number,  # ✅ Added argument
+                    }
                 )
 
                 pdf2.save(); buf2.seek(0)
