@@ -348,7 +348,7 @@ st.markdown(f"### 🧾 Current Subtotal (After Discount): ₹ {subtotal:.2f}")
 # 7) PDF Rendering Helper
 # =====================
 
-def _draw_page(inv: canvas.Canvas, heading: str, totals: dict):
+def _draw_page(inv: canvas.Canvas, heading: str, totals: dict, gst_number: str):
     total_amount = totals["total_amount"]
     discount_amt = totals["discount_amt"]
     grand_total = totals["grand_total"]
@@ -374,6 +374,8 @@ def _draw_page(inv: canvas.Canvas, heading: str, totals: dict):
     inv.drawString(15, 70, f"Invoice No.: {invoice_no}")
     inv.drawString(15, 80, f"Artisan Code: {artisan_code}")
     inv.drawString(15, 90, f"Date: {date_str}")
+    inv.drawString(15, 100, f"GST No.: {gst_number}")
+
 
     # Right column
     inv.drawString(110, 70, f"Stall No.: {stall_no}")
@@ -449,9 +451,10 @@ if st.button("🧾 Generate Invoice", disabled=st.button_disabled):
     buf = BytesIO()
     height = 250 + 15 * len(items)
     pdf = canvas.Canvas(buf, pagesize=(200, height), bottomup=0)
-    _draw_page(pdf, "INVOICE", totals)
+    gst_number = config["credentials"]["usernames"]["masteruser"].get("gst_number", "—")
+    _draw_page(pdf, "INVOICE", totals, gst_number)
     pdf.showPage()
-    _draw_page(pdf, "ARTISAN SLIP", totals)
+    _draw_page(pdf, "ARTISAN SLIP", totals, gst_number)
     pdf.save()
     buf.seek(0)
 
