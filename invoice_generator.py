@@ -586,6 +586,8 @@ if is_admin or is_master:
                 buf2 = BytesIO()
                 height2 = 250 + 15 * len(items)
                 pdf2 = canvas.Canvas(buf2, pagesize=(200, height2), bottomup=0)
+                gst_number = config["credentials"]["usernames"]["masteruser"].get("gst_number", "—")
+
                 _draw_page(
                     pdf2,
                     "INVOICE",
@@ -594,8 +596,11 @@ if is_admin or is_master:
                         "discount_amt": discount_amt_sel,
                         "grand_total": grand_total_sel,
                     },
+                    gst_number,  # ✅ Added argument
                 )
+                
                 pdf2.showPage()
+                
                 _draw_page(
                     pdf2,
                     "ARTISAN SLIP",
@@ -604,7 +609,9 @@ if is_admin or is_master:
                         "discount_amt": discount_amt_sel,
                         "grand_total": grand_total_sel,
                     },
+                    gst_number,  # ✅ Added argument
                 )
+
                 pdf2.save(); buf2.seek(0)
                 st.download_button("📥 Download Re-Generated PDF", buf2, file_name=f"{invoice_no_sel}_copy.pdf")
 
