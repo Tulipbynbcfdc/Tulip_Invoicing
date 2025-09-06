@@ -540,6 +540,11 @@ if is_admin or is_master:
                         "price": float(r["Price"]),
                         "qty": int(r["Qty"]),
                         "total": float(r["Total (Item)"]),
+                        "discount_percent": float(r.get("Discount%", 0)),
+                        "final_total": float(r.get("Final Total (Item)", r["Total (Item)"])),
+                        "gst_percent": float(r.get("GST%", 0)),    # ✅ get "GST%" column value
+                        "gst_amount": float(r.get("GST Amt", 0)),
+                        "artisan_payout": float(r.get("Artisan Payout", r["Total (Item)"])),
                     }
                     for i, r in enumerate(invoice_items)
                 ]
