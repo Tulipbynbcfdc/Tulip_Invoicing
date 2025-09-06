@@ -374,8 +374,6 @@ def _draw_page(inv: canvas.Canvas, heading: str, totals: dict):
     inv.drawString(15, 70, f"Invoice No.: {invoice_no}")
     inv.drawString(15, 80, f"Artisan Code: {artisan_code}")
     inv.drawString(15, 90, f"Date: {date_str}")
-    inv.drawString(15, 100, f"GST No.: {gst_number}")
-
 
     # Right column
     inv.drawString(110, 70, f"Stall No.: {stall_no}")
