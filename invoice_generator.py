@@ -284,12 +284,17 @@ if billing_counter and not _all_df.empty and "Invoice No" in _all_df.columns:
     df_counter = _all_df[_all_df["Invoice No"].astype(str).str.startswith(billing_counter)]
     if not df_counter.empty:
         last = (
-            df_counter["Invoice No"].astype(str).str.extract(rf"{billing_counter}_INV(\d+)")[0]
+            df_counter["Invoice No"]
+            .astype(str)
+            .str.extract(rf"{billing_counter}_INV(\d+)")[0]
             .dropna()
             .astype(int)
             .max()
         )
-        inv_numeric = int(last) + 1
+        inv_numeric = int(last) + 1 if pd.notna(last) else 1
+    else:
+        inv_numeric = 1
+
 invoice_no = f"{billing_counter}_INV{inv_numeric:02d}" if billing_counter else ""
 
 # Items
