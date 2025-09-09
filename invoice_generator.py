@@ -571,9 +571,6 @@ if is_admin or is_master:
                     }
                 )
 
-
-
-                ]
                 # Rehydrate header fields
                 stall_no_sel = invoice_items[0]["Stall No"]
                 invoice_no_sel = invoice_items[0]["Invoice No"]
