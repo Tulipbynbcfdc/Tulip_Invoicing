@@ -400,7 +400,7 @@ def _draw_page(inv: canvas.Canvas, heading: str, totals: dict):
     inv.drawString(75, start_y + 10, "Price")
     inv.drawString(100, start_y + 10, "Qty")
     inv.drawString(125, start_y + 10, "GST% (incl)")
-    inv.drawString(160, start_y + 10, "Total")
+    inv.drawString(160, y, f"{it['final_total']:.2f}")
 
 
 
@@ -569,8 +569,9 @@ if is_admin or is_master:
                 pm_sel = invoice_items[0].get("Payment Method", "Cash")
                 discount_percent = float(invoice_items[0].get("Discount%", 0))
                 total_amount_sel = sum(it["total"] for it in items_copy)
-                discount_amt_sel = total_amount_sel * discount_percent / 100.0
-                grand_total_sel = float(invoice_items[0]["Final Total (Invoice)"])
+                discount_amt_sel = sum(it["total"] - it["final_total"] for it in items_copy)
+                grand_total_sel = sum(it["final_total"] for it in items_copy)
+
 
             
                 invoice_no_bkp, stall_no_bkp, date_bkp, ph_bkp, art_bkp, pm_bkp, items_bkp = (
