@@ -569,8 +569,9 @@ if is_admin or is_master:
                 pm_sel = invoice_items[0].get("Payment Method", "Cash")
                 discount_percent = float(invoice_items[0].get("Discount%", 0))
                 total_amount_sel = sum(it["total"] for it in items_copy)
-                discount_amt_sel = sum(it["total"] - it["final_total"] for it in items_copy)
-                grand_total_sel = sum(it["final_total"] for it in items_copy)
+                discount_amt_sel = total_amount_sel * (discount_percent / 100.0)
+                grand_total_sel = float(invoice_items[0]["Final Total (Invoice)"])
+
 
 
             
