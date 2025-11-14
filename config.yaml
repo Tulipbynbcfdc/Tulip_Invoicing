@@ -62,8 +62,12 @@ credentials:
       name: sudish
       password: $2b$12$AsIRXyiZGgC0TxU2.t0lf.M.SSyKZCLYhUHkPu2Ja/ZEBp9tDZSB.
       role: admin
-    TF01:
+    tf01:
       name: NBCFDC
       password: $2b$12$t8A6H2BQsusjzDt1/lhfuOofQUKUU1dSBHISITNEvXT1S5eSEuRwi
+      role: user
+    TF02:
+      name: NBCFDC
+      password: $2b$12$Y.2G/oUQiKN/lTAPysSMceFNH2shY2D85a3ghTgnYD2ohKBhfLIhS
       role: user
 gst_number: 07AABCN8953B1ZI
