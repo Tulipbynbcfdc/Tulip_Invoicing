@@ -82,8 +82,12 @@ credentials:
       name: NSFDC
       password: $2b$12$S7D8uszyFXgnFco/Z7XJhe1BDLMpYVBnT.5kSdPfNiaDTAAqvUhaq
       role: user
-    TF06:
+    tf06:
       name: NSFDC
       password: $2b$12$1YV9cejIv5IpXTWfg8yXxOPMkEsL1L9WuEbJ79hdvQR0Aol3Sm6xq
+      role: user
+    TF07:
+      name: NSKFDC
+      password: $2b$12$Jnh2EF0hfJBjVXEk5dsIH..6zFF/9w5Sp3wPXtZCqZCOdpKjDBeVK
       role: user
 gst_number: 07AABCN8953B1ZI
