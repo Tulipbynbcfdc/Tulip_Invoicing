@@ -66,8 +66,12 @@ credentials:
       name: NBCFDC
       password: $2b$12$t8A6H2BQsusjzDt1/lhfuOofQUKUU1dSBHISITNEvXT1S5eSEuRwi
       role: user
-    TF02:
+    tf02:
       name: NBCFDC
       password: $2b$12$Y.2G/oUQiKN/lTAPysSMceFNH2shY2D85a3ghTgnYD2ohKBhfLIhS
+      role: user
+    TF03:
+      name: NBCFDC
+      password: $2b$12$1QEiadthlIXIsXiVsFTvpu2SGT0evQduAFVeeYHVzgcnzQLHKVh8O
       role: user
 gst_number: 07AABCN8953B1ZI
